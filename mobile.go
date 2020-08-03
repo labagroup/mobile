@@ -70,6 +70,16 @@ func SetTimeZone(name string, offset int) {
 	time.Local = loc
 }
 
+func GetTimeZoneOffset() int {
+	_, o := time.Now().Zone()
+	return o
+}
+
+func GetTimeZoneName() string {
+	n, _ := time.Now().Zone()
+	return n
+}
+
 func NewUUID() string {
 	return types.NewUUID()
 }
