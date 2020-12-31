@@ -135,3 +135,16 @@ func listIPv6() (map[string][]string, error) {
 	}
 	return res, nil
 }
+
+func GetNetInterfaceNames() *StringList {
+	l := new(StringList)
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		log.Error(err)
+		return l
+	}
+	for _, ifa := range ifaces {
+		l.List = append(l.List, ifa.Name)
+	}
+	return l
+}

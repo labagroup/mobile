@@ -71,3 +71,33 @@ func (s *StringSet) Contains(str string) bool {
 func (s *StringSet) Remove(str string) {
 	((*types.StringSet)(s)).Remove(str)
 }
+
+type StringMap struct {
+	m map[string]string
+}
+
+func NewStringMap() *StringMap {
+	return &StringMap{
+		m: make(map[string]string),
+	}
+}
+
+func (m *StringMap) Len() int {
+	return len(m.m)
+}
+
+func (m *StringMap) Get(key string) string {
+	return m.m[key]
+}
+
+func (m *StringMap) Set(key, val string) {
+	m.m[key] = val
+}
+
+func (m *StringMap) Keys() *StringList {
+	l := new(StringList)
+	for k := range m.m {
+		l.List = append(l.List, k)
+	}
+	return l
+}
