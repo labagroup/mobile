@@ -3,7 +3,8 @@ package mobile
 import (
 	"time"
 
-	"github.com/gopub/log"
+	"github.com/google/uuid"
+	"github.com/gopub/conv"
 	"github.com/gopub/types"
 )
 
@@ -61,13 +62,7 @@ func GetDeviceID(m SecretManager) string {
 }
 
 func SetTimeZone(name string, offset int) {
-	// LoadLocation get failed on iOS
-	loc, err := time.LoadLocation(name)
-	if err != nil {
-		log.Warnf("Cannot load location %s: %v. Set fixed zone", name, err)
-		loc = time.FixedZone(name, offset)
-	}
-	time.Local = loc
+	time.Local = conv.ToLocation(name, offset)
 }
 
 func GetTimeZoneOffset() int {
@@ -81,5 +76,5 @@ func GetTimeZoneName() string {
 }
 
 func NewUUID() string {
-	return types.NewUUID()
+	return uuid.New().String()
 }
