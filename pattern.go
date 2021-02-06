@@ -3,6 +3,7 @@ package mobile
 import (
 	"github.com/gopub/conv"
 	"github.com/gopub/types"
+	"github.com/gopub/wine/urlutil"
 )
 
 func IsEmailAddress(s string) bool {
@@ -10,7 +11,7 @@ func IsEmailAddress(s string) bool {
 }
 
 func IsURL(s string) bool {
-	return conv.IsURL(s)
+	return urlutil.IsURL(s)
 }
 
 func IsPhoneNumber(phoneNumber string) bool {

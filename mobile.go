@@ -55,7 +55,7 @@ const (
 func GetDeviceID(m SecretManager) string {
 	id := m.Get(KeyDeviceID)
 	if id == "" {
-		id = types.NewUUID()
+		id = uuid.NewString()
 		m.Set(KeyDeviceID, id)
 	}
 	return id

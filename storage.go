@@ -3,13 +3,12 @@ package mobile
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/google/uuid"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/gopub/types"
 )
 
 type StorageHandler interface {
@@ -98,7 +97,7 @@ func (s *Storage) UploadImage(name string, data []byte, handler ProgressHandler)
 
 func (s *Storage) Save(data []byte) *StringE {
 	res := new(StringE)
-	res.Val = types.NewUUID()
+	res.Val = uuid.NewString()
 	res.Err = ToError(ioutil.WriteFile(s.GetFilePath(res.Val), data, 0644))
 	return res
 }
