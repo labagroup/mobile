@@ -78,3 +78,13 @@ func GetTimeZoneName() string {
 func NewUUID() string {
 	return uuid.New().String()
 }
+
+type IOSDirInfo struct {
+	Document  string
+	Cache     string
+	Temporary string
+}
+
+func NewIOSDirInfo() *IOSDirInfo {
+	return new(IOSDirInfo)
+}
