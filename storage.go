@@ -3,12 +3,13 @@ package mobile
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/google/uuid"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/google/uuid"
 )
 
 type StorageHandler interface {

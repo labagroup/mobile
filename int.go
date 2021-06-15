@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/gopub/conv"
-
 	"github.com/gopub/types"
 )
 

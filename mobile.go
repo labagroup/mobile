@@ -88,3 +88,7 @@ type IOSDirInfo struct {
 func NewIOSDirInfo() *IOSDirInfo {
 	return new(IOSDirInfo)
 }
+
+type Now interface {
+	Now() int64
+}
