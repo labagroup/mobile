@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gopub/sql"
 	"reflect"
+	"sync"
 	"time"
 )
 
@@ -23,6 +24,7 @@ type Table struct {
 	name    string
 	keyType TableKeyType
 	db      *sql.DB
+	mu      sync.RWMutex
 	stmts   struct {
 		insert            *sql.Stmt
 		update            *sql.Stmt
@@ -86,25 +88,36 @@ func (t *Table) now() int64 {
 }
 
 func (t *Table) Insert(record TableRecord) error {
+	t.mu.Lock()
 	_, err := t.stmts.insert.Exec(record.RecordKey(), sql.JSON(record), t.now())
+	t.mu.Unlock()
 	return err
 }
 
 func (t *Table) Update(record TableRecord) error {
+	t.mu.Lock()
 	_, err := t.stmts.update.Exec(record.RecordKey(), sql.JSON(record), t.now())
+	t.mu.Unlock()
 	return err
 }
 
 func (t *Table) Save(record TableRecord) error {
+	t.mu.Lock()
 	_, err := t.stmts.save.Exec(record.RecordKey(), sql.JSON(record), t.now())
+	t.mu.Unlock()
 	return err
 }
 
 func (t *Table) Get(key interface{}, ptrToRecord interface{}) error {
-	return t.stmts.get.QueryRow(key).Scan(sql.JSON(ptrToRecord))
+	t.mu.RLock()
+	err := t.stmts.get.QueryRow(key).Scan(sql.JSON(ptrToRecord))
+	t.mu.RUnlock()
+	return err
 }
 
 func (t *Table) ListAll(ptrToSlice interface{}) error {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
 	rows, err := t.stmts.listAll.Query()
 	if err != nil {
 		return err
@@ -114,6 +127,8 @@ func (t *Table) ListAll(ptrToSlice interface{}) error {
 }
 
 func (t *Table) ListGreaterThan(key interface{}, ptrToSlice interface{}) error {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
 	rows, err := t.stmts.listGreaterThan.Query(key)
 	if err != nil {
 		return err
@@ -123,6 +138,8 @@ func (t *Table) ListGreaterThan(key interface{}, ptrToSlice interface{}) error {
 }
 
 func (t *Table) ListLessThan(key interface{}, ptrToSlice interface{}) error {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
 	rows, err := t.stmts.listLessThan.Query(key)
 	if err != nil {
 		return err
