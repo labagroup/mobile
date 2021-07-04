@@ -64,12 +64,12 @@ func TestIntTable(t *testing.T) {
 	require.Equal(t, items, l)
 
 	l = l[0:0]
-	err = tbl.ListGreaterThan(item.ID, &l, 10)
+	err = tbl.ListGreaterThan(item.ID, 10, &l)
 	require.NoError(t, err)
 	require.Empty(t, l)
 
 	l = l[0:0]
-	err = tbl.ListLessThan(item.ID+1, &l, 10)
+	err = tbl.ListLessThan(item.ID+1, 10, &l)
 	require.NoError(t, err)
 	require.Equal(t, 2, len(l))
 	//t.Log(l[0].ID, l[1].ID)

@@ -126,7 +126,7 @@ func (t *Table) ListAll(ptrToSlice interface{}) error {
 	return t.readList(rows, ptrToSlice)
 }
 
-func (t *Table) ListGreaterThan(key interface{}, ptrToSlice interface{}, limit int) error {
+func (t *Table) ListGreaterThan(key interface{}, limit int, ptrToSlice interface{}) error {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
 	rows, err := t.stmts.listGreaterThan.Query(key, limit)
@@ -137,7 +137,7 @@ func (t *Table) ListGreaterThan(key interface{}, ptrToSlice interface{}, limit i
 	return t.readList(rows, ptrToSlice)
 }
 
-func (t *Table) ListLessThan(key interface{}, ptrToSlice interface{}, limit int) error {
+func (t *Table) ListLessThan(key interface{}, limit int, ptrToSlice interface{}) error {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
 	rows, err := t.stmts.listLessThan.Query(key, limit)
