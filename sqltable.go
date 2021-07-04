@@ -72,8 +72,8 @@ updated_at BIGINT
 	t.stmts.save = sql.MustPrepare(db, `REPLACE INTO %s(id,data,updated_at) VALUES(?,?,?)`, name)
 	t.stmts.get = sql.MustPrepare(db, `SELECT data FROM %s WHERE id=?`, name)
 	t.stmts.listAll = sql.MustPrepare(db, `SELECT data FROM %s`, name)
-	t.stmts.listGreaterThan = sql.MustPrepare(db, `SELECT data FROM %s WHERE id>?`, name)
-	t.stmts.listLessThan = sql.MustPrepare(db, `SELECT data FROM %s WHERE id<?`, name)
+	t.stmts.listGreaterThan = sql.MustPrepare(db, `SELECT data FROM %s WHERE id>? ORDER BY id ASC LIMIT ?`, name)
+	t.stmts.listLessThan = sql.MustPrepare(db, `SELECT data FROM %s WHERE id<? ORDER BY id DESC LIMIT ?`, name)
 	t.stmts.delete = sql.MustPrepare(db, `DELETE FROM %s WHERE id=?`, name)
 	t.stmts.deleteGreaterThan = sql.MustPrepare(db, `DELETE FROM %s WHERE id>?`, name)
 	t.stmts.deleteLessThan = sql.MustPrepare(db, `DELETE FROM %s WHERE id<?`, name)
@@ -126,10 +126,10 @@ func (t *Table) ListAll(ptrToSlice interface{}) error {
 	return t.readList(rows, ptrToSlice)
 }
 
-func (t *Table) ListGreaterThan(key interface{}, ptrToSlice interface{}) error {
+func (t *Table) ListGreaterThan(key interface{}, ptrToSlice interface{}, limit int) error {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
-	rows, err := t.stmts.listGreaterThan.Query(key)
+	rows, err := t.stmts.listGreaterThan.Query(key, limit)
 	if err != nil {
 		return err
 	}
@@ -137,15 +137,24 @@ func (t *Table) ListGreaterThan(key interface{}, ptrToSlice interface{}) error {
 	return t.readList(rows, ptrToSlice)
 }
 
-func (t *Table) ListLessThan(key interface{}, ptrToSlice interface{}) error {
+func (t *Table) ListLessThan(key interface{}, ptrToSlice interface{}, limit int) error {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
-	rows, err := t.stmts.listLessThan.Query(key)
+	rows, err := t.stmts.listLessThan.Query(key, limit)
 	if err != nil {
 		return err
 	}
 	defer rows.Close()
-	return t.readList(rows, ptrToSlice)
+	err = t.readList(rows, ptrToSlice)
+	if err != nil {
+		return err
+	}
+	l := reflect.ValueOf(ptrToSlice).Elem()
+	swapF := reflect.Swapper(l.Interface())
+	for i, j := 0, l.Len()-1; i < j; i, j = i+1, j-1 {
+		swapF(i, j)
+	}
+	return nil
 }
 
 func (t *Table) readList(rows *sql.Rows, ptrToSlice interface{}) error {
