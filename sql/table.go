@@ -3,11 +3,16 @@ package mobile
 import (
 	"errors"
 	"fmt"
-	"github.com/gopub/sql"
 	"reflect"
 	"sync"
 	"time"
+
+	"github.com/gopub/sql"
 )
+
+type Now interface {
+	Now() int64
+}
 
 type TableRecord interface {
 	RecordKey() interface{}

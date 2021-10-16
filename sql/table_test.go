@@ -2,12 +2,13 @@ package mobile_test
 
 import (
 	"database/sql"
+	"testing"
+
 	"github.com/gopub/errors"
 	"github.com/gopub/types"
 	"github.com/labagroup/mobile"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func createTable(t *testing.T, name string, keyType mobile.TableKeyType) *mobile.Table {
